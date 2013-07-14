@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o nounset
 
 
 ###############################################################################
@@ -11,11 +12,10 @@
 #### These variables need to be defined for every machine ####
 GTEST_DIR=
 
-if [ `hostname` = megatron ]
-then
+if [[ `hostname` == "megatron" ]]; then
     GTEST_DIR=/opt/COTS/defaults/gtest
     INO_DIR=/opt/COTS/defaults/ino
-	ARDUINO_DIR=/opt/COTS/defaults/arduino-sdk
+    ARDUINO_DIR=/opt/COTS/defaults/arduino-sdk
 fi
 
 
@@ -25,7 +25,7 @@ export PYTHONPATH=${PYTHONPATH}:${INO_DIR}/lib/python2.7/site-packages
 #### These product versions are special ####
 
 ## Google Test ##
-GTESTVER=`head -1 $GTEST_DIR/CHANGES | cut -d ' ' -f 3`
+GTESTVER=`head -1 ${GTEST_DIR}/CHANGES | cut -d ' ' -f 3`
 GTESTVER=${GTESTVER%?}  # remove last character
 
 
@@ -37,9 +37,9 @@ readonly COL2SIZE=86
 readonly TABLECHAR="-"
 
 function printEnds {
-    for((i = 0; i < $COL1SIZE + $COL2SIZE + 11; i++))
+    for((i = 0; i < ${COL1SIZE} + ${COL2SIZE} + 11; i++))
     do
-        printf "%s" $TABLECHAR
+        printf "%s" ${TABLECHAR}
     done
     printf "\n"
 }
@@ -47,7 +47,7 @@ function printEnds {
 function printRemaining {
     strLen=$1
     colSize=$2
-    for((i = $1; i < $colSize; i++))
+    for((i = ${strLen}; i < ${colSize}; i++))
     do
         printf "%s" " "
     done
@@ -59,10 +59,10 @@ function printVersion {
     version=$2
     versionLen=${#version}
 
-    printf "|  %s" "$name"
-    printRemaining $nameLen $COL1SIZE
-    printf "  |  %s  " "$version"
-    printRemaining $versionLen $COL2SIZE
+    printf "|  %s" "${name}"
+    printRemaining ${nameLen} ${COL1SIZE}
+    printf "  |  %s  " "${version}"
+    printRemaining ${versionLen} ${COL2SIZE}
     printf "|\n"
 }
 
@@ -82,7 +82,7 @@ printVersion "Arduino SDK" "$(sed -n 2p ${ARDUINO_DIR}/revisions.txt)"
 printVersion "Bash" "$(bash --version | head -1)"
 printVersion "Doxygen" "$(doxygen --version)"
 printVersion "G++" "$(g++ --version | head -1)"
-printVersion "Google Test" "$GTESTVER"
+printVersion "Google Test" "${GTESTVER}"
 printVersion "Linux Kernel" "$(uname -r)"
 printVersion "Make" "$(make --version | head -1)"
 printVersion "Python" "$(python --version 2>&1 > /dev/null)"

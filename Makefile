@@ -12,6 +12,7 @@ MODEL_OPT=--board-model
 # DIRECTORIES
 BIN_DIR=bin
 DOC_DIR=doc
+SUB_DIRS=test
 
 # TARGETS
 .PHONY: clean build
@@ -21,6 +22,9 @@ build: clean
 	$(INO_EXEC) build $(SDK_OPT) $(SDK_DIR) $(MODEL_OPT) $(BOARD_MODEL)
 
 clean:
+	@for dir in $(SUB_DIRS); do \
+		$(MAKE) -C $$dir clean; \
+	done
 	@$(INO_EXEC) clean
 	@$(RMDIR) $(BIN_DIR)
 	@$(RMDIR) $(DOC_DIR)
